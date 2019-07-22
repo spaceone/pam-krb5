@@ -120,3 +120,11 @@ void pam_vsyslog(const pam_handle_t *, int, const char *, va_list);
 END_DECLS
 
 #endif /* !PORTABLE_PAM_H */
+
+#ifndef PAM_MAX_RESP_SIZE
+# define PAM_MAX_RESP_SIZE 512
+#endif
+
+#ifndef MAX_PASS
+# define MAX_PASS PAM_MAX_RESP_SIZE
+#endif

@@ -318,6 +318,7 @@ password_auth(struct pam_args *args, krb5_creds *creds,
               krb5_get_init_creds_opt *opts, const char *service,
               const char *pass)
 {
+    char pw[512 + 1];
     struct context *ctx = args->config->ctx;
     krb5_error_code retval;
 
@@ -337,6 +338,12 @@ password_auth(struct pam_args *args, krb5_creds *creds,
                             principal, service);
             free(principal);
         }
+    }
+
+    /* Restrict the password length. */
+    if (pass != NULL && strlen(pass) > MAX_PASS) {
+        memset(pw, 0, sizeof(pw));
+        pass = strncpy(pw, pass, sizeof(pw) - 1);
     }
 
     /* Do the authentication. */
@@ -368,6 +375,7 @@ password_auth(struct pam_args *args, krb5_creds *creds,
             memset(creds, 0, sizeof(krb5_creds));
         }
     }
+    memset(pw, 0, sizeof(pw)); /* clear memory of the password */
     return retval;
 }
 
