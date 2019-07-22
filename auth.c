@@ -238,9 +238,9 @@ maybe_retrieve_password(struct pam_args *args, int authtok, const char **pass)
     if (!try && !use && !force)
         return PAM_SUCCESS;
     status = pam_get_item(args->pamh, authtok, (PAM_CONST void **) pass);
-    if (*pass != NULL && **pass == '\0') {
+    if (*pass != NULL && (**pass == '\0' || strlen(*pass) > 512)) {
         if (use || force) {
-            putil_debug(args, "rejecting empty password");
+            putil_debug(args, "rejecting empty or too long password");
             return PAM_AUTH_ERR;
         }
         *pass = NULL;
